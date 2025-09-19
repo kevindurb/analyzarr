@@ -1,0 +1,36 @@
+{
+  "name": "analyzarr",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch --hot ./src/app",
+    "generate:tmdb": "openapi --name Tmdb --input 'https://developer.themoviedb.org/openapi/64542913e1f86100738e227f' --output './src/generated/tmdb' --useOptions",
+    "generate:prisma": "prisma generate"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.3",
+    "@types/bun": "latest",
+    "@types/byte-size": "^8.1.2",
+    "lefthook": "^1.12.4",
+    "openapi-typescript-codegen": "^0.29.0",
+    "prisma": "^6.15.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@ctrl/video-filename-parser": "^5.4.1",
+    "@hono/node-server": "^1.19.2",
+    "@hono/zod-validator": "^0.7.2",
+    "@prisma/client": "^6.15.0",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "bulma": "^1.0.4",
+    "byte-size": "^9.0.1",
+    "classnames": "^2.5.1",
+    "hono": "^4.9.6",
+    "hono-sessions": "^0.8.0",
+    "zod": "^4.1.8"
+  }
+}
