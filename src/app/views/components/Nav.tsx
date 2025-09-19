@@ -11,7 +11,7 @@ export const Nav: FC<Props> = ({ req }) => (
   <nav class='navbar is-fixed-top is-dark'>
     <div class='navbar-brand'>
       <a class='navbar-item is-size-5 has-text-weight-bold has-text-primary' href='/'>
-        <Icon name='download' />
+        <Icon name='troubleshoot' />
         Analyzarr
       </a>
     </div>

@@ -1,14 +1,22 @@
 import querystring from 'node:querystring';
 import type { FC } from 'hono/jsx';
 
-const iconNames = ['download', 'movie', 'tv', 'link_off', 'edit', 'check', 'add'];
+const iconNames = ['download', 'movie', 'tv', 'link_off', 'edit', 'check', 'add', 'troubleshoot'];
 type IconName = (typeof iconNames)[number];
 
 type Props = {
   name: IconName;
 };
 
-export const Icon: FC<Props> = ({ name }) => <i class='material-symbols-outlined'>{name}</i>;
+const styles = {
+  'font-size': 'inherit',
+};
+
+export const Icon: FC<Props> = ({ name }) => (
+  <i style={styles} class='material-symbols-outlined'>
+    {name}
+  </i>
+);
 
 const iconQueryString = querystring.stringify({
   family: 'Material Symbols Outlined',
