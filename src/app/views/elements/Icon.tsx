@@ -1,7 +1,7 @@
 import querystring from 'node:querystring';
 import type { FC } from 'hono/jsx';
 
-const iconNames = ['download', 'movie', 'tv', 'link_off', 'edit', 'check'];
+const iconNames = ['download', 'movie', 'tv', 'link_off', 'edit', 'check', 'add'];
 type IconName = (typeof iconNames)[number];
 
 type Props = {
