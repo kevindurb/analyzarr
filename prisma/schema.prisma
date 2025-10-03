@@ -9,14 +9,33 @@ datasource db {
 }
 
 enum LibraryType {
-  Tv
   Movies
+  TvShows
+  Music
+  Other
 }
 
 model Library {
   id        String      @id @default(cuid())
+  name      String
   path      String
   type      LibraryType
+
+  files     File[]
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model File {
+  id        String      @id @default(cuid())
+
+  filePath  String      @unique
+  fileSize  BigInt
+  fileType  String
+
+  libraryId String?
+  library   Library?    @relation(fields: [libraryId], references: [id])
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt

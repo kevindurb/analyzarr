@@ -1,6 +1,10 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
+import { scanLibrary } from '@/domain/libraryScanner';
+import { LibraryType } from '@/generated/prisma';
 import { prisma } from '@/infrastructure/prisma';
 import type { AppEnv } from '../types';
+import { CreateLibraryBody } from '../validators/CreateLibrary';
 import { Fab } from '../views/elements/Fab';
 import { Icon } from '../views/elements/Icon';
 import { Layout } from '../views/layouts/Layout';
@@ -8,7 +12,13 @@ import { Layout } from '../views/layouts/Layout';
 export const librariesRouter = new Hono<AppEnv>();
 
 librariesRouter.get('/', async (c) => {
-  const libraries = await prisma.library.findMany();
+  const libraries = await prisma.library.findMany({
+    include: {
+      _count: {
+        select: { files: true },
+      },
+    },
+  });
 
   return c.html(
     <Layout c={c}>
@@ -16,12 +26,29 @@ librariesRouter.get('/', async (c) => {
       {libraries.map((library) => (
         <div class='card'>
           <header class='card-header'>
-            <p class='card-header-title'>{library.path}</p>
-            <button type='submit' class='card-header-icon'>
-              <span class='icon'>
-                <Icon name='trash' />
-              </span>
-            </button>
+            <p class='card-header-title'>
+              {`${library.name}:`}
+              <i class='is-italic has-text-weight-light'>{library.path}</i>
+              {library._count.files ? (
+                <span class='tag'>{library._count.files}</span>
+              ) : (
+                <span class='tag is-danger'>No Files Found</span>
+              )}
+            </p>
+            <form method='post' action={`/libraries/${library.id}/delete`}>
+              <button type='submit' class='card-header-icon is-danger'>
+                <span class='icon'>
+                  <Icon name='delete' />
+                </span>
+              </button>
+            </form>
+            <form method='post' action={`/libraries/${library.id}/scan`}>
+              <button type='submit' class='card-header-icon'>
+                <span class='icon'>
+                  <Icon name='scan' />
+                </span>
+              </button>
+            </form>
           </header>
         </div>
       ))}
@@ -55,10 +82,18 @@ librariesRouter.get('/new', (c) => {
                 <option value='' disabled>
                   Type
                 </option>
-                <option value='movies'>Movies</option>
-                <option value='tv_shows'>TV Shows</option>
-                <option value='music'>Music</option>
-                <option value='other'>Other</option>
+                <option value={CreateLibraryBody.shape.type.encode(LibraryType.Movies)}>
+                  Movies
+                </option>
+                <option value={CreateLibraryBody.shape.type.encode(LibraryType.TvShows)}>
+                  TV Shows
+                </option>
+                <option value={CreateLibraryBody.shape.type.encode(LibraryType.Music)}>
+                  Music
+                </option>
+                <option value={CreateLibraryBody.shape.type.encode(LibraryType.Other)}>
+                  Other
+                </option>
               </select>
             </div>
           </div>
@@ -84,4 +119,29 @@ librariesRouter.get('/new', (c) => {
       </form>
     </Layout>,
   );
+});
+
+librariesRouter.post('/new', zValidator('form', CreateLibraryBody), async (c) => {
+  await prisma.library.create({
+    data: c.req.valid('form'),
+  });
+  c.get('session').flash('success', 'Library created');
+  return c.redirect('/libraries');
+});
+
+librariesRouter.post('/:libraryId/scan', async (c) => {
+  const library = await prisma.library.findUniqueOrThrow({
+    where: { id: c.req.param('libraryId') },
+  });
+  await scanLibrary(library);
+  c.get('session').flash('success', 'Library scanned');
+  return c.redirect('/libraries');
+});
+
+librariesRouter.post('/:libraryId/delete', async (c) => {
+  await prisma.library.delete({
+    where: { id: c.req.param('libraryId') },
+  });
+  c.get('session').flash('success', 'Library deleted');
+  return c.redirect('/libraries');
 });
