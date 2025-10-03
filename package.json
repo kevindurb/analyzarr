@@ -26,11 +26,13 @@
     "@hono/node-server": "^1.19.2",
     "@hono/zod-validator": "^0.7.2",
     "@prisma/client": "^6.15.0",
+    "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "bulma": "^1.0.4",
     "byte-size": "^9.0.1",
     "classnames": "^2.5.1",
+    "form-data": "4.x",
     "hono": "^4.9.6",
     "hono-sessions": "^0.8.0",
     "zod": "^4.1.8"
