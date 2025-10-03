@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "check": "bunx tsc --noEmit",
     "dev": "bun run --watch --hot ./src/app",
     "download:tmdb": "curl https://developer.themoviedb.org/openapi/tmdb-api.json | jq -f ./clean-tmdb-schema.jq > tmdb-api.json",
     "generate:tmdb": "openapi --name Tmdb --input ./tmdb-api.json --output ./src/generated/tmdb --useOptions --client axios",
