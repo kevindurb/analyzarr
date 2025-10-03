@@ -1,9 +1,11 @@
-import type { Library } from '@/generated/prisma';
 import { getAllFilesInDir } from '@/infrastructure/filesService';
 import { prisma } from '@/infrastructure/prisma';
 
-export const scanLibrary = async (library: Library) => {
-  console.log('Scanning', library.path);
+declare var self: Worker;
+
+self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
+  console.log('Starting');
+  const library = await prisma.library.findUniqueOrThrow({ where: { id: event.data.libraryId } });
   const files = await getAllFilesInDir(library.path);
 
   for (const file of files) {

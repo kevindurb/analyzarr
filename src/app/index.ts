@@ -22,6 +22,7 @@ app.use(
 );
 
 app.onError((err, c) => {
+  console.error(err);
   c.get('session').flash('error', `Server Error: ${err.message}`);
   const referrer = new URL(c.req.header('Referer') ?? '/');
   return c.redirect(referrer.pathname);
