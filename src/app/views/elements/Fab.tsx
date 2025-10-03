@@ -3,10 +3,9 @@ import type { FC, PropsWithChildren } from 'hono/jsx';
 
 type Props = {
   href?: string;
-  type?: 'primary' | 'info';
 };
 
-export const Fab: FC<PropsWithChildren<Props>> = ({ children, href, type }) => {
+export const Fab: FC<PropsWithChildren<Props>> = ({ children, href }) => {
   const classes = clx(
     'is-fixed',
     'is-bottom-right',
@@ -15,11 +14,9 @@ export const Fab: FC<PropsWithChildren<Props>> = ({ children, href, type }) => {
     'is-medium',
     'is-rounded',
     'is-size-3',
-    {
-      'is-primary': type === 'primary' || !type,
-      'is-info': type === 'info',
-    },
+    'is-primary',
   );
+
   if (href) {
     return (
       <a href={href} class={classes}>
@@ -27,6 +24,7 @@ export const Fab: FC<PropsWithChildren<Props>> = ({ children, href, type }) => {
       </a>
     );
   }
+
   return (
     <button type='submit' class={classes}>
       {children}
