@@ -133,7 +133,7 @@ librariesRouter.post('/:libraryId/scan', async (c) => {
   const library = await prisma.library.findUniqueOrThrow({
     where: { id: c.req.param('libraryId') },
   });
-  scanLibrary(library);
+  scanLibrary(library.id);
   c.get('session').flash('info', 'Scanning in progress');
   return c.redirect('/libraries');
 });
