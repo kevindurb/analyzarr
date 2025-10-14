@@ -5,7 +5,10 @@ declare var self: Worker;
 
 self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
   console.log('Starting');
-  const library = await prisma.library.findUniqueOrThrow({ where: { id: event.data.libraryId } });
+  const library = await prisma.library.findUniqueOrThrow({
+    where: { id: event.data.libraryId },
+    include: { files: true },
+  });
   const files = await getAllFilesInDir(library.path);
 
   for (const file of files) {
@@ -23,5 +26,13 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
         libraryId: library.id,
       },
     });
+  }
+
+  for (const file of library.files) {
+    const matchingFile = files.find(({ filePath }) => filePath === file.filePath);
+    if (!matchingFile) {
+      console.log('Deleting missing file', file.filePath);
+      await prisma.file.delete({ where: { filePath: file.filePath, libraryId: library.id } });
+    }
   }
 };
