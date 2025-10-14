@@ -40,6 +40,5 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         with:
           tags: ${{ steps.meta.outputs.tags }}
-          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
