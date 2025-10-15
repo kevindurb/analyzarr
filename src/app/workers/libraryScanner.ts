@@ -35,4 +35,7 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
       await prisma.file.delete({ where: { filePath: file.filePath, libraryId: library.id } });
     }
   }
+
+  console.log('Done scanning');
+  self.terminate();
 };
