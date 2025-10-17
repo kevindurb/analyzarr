@@ -3,7 +3,7 @@ import z from 'zod';
 import { stringToFloat, stringToInt } from '@/util/zod';
 
 export const FFProbeEmptyStream = z.object({
-  codec_type: z.any(),
+  codec_type: z.literal('').optional(),
 });
 
 export const FFProbeVideoStream = z.object({
