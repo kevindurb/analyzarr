@@ -7,21 +7,18 @@ export const FFProbeSubtitleStream = z.object({
 });
 
 export const FFProbeVideoStream = z.object({
-  index: z.number(),
-  codec_name: z.string(),
+  codec_name: z.string().optional(),
   codec_type: z.literal('video'),
-  width: z.int(),
-  height: z.int(),
+  width: z.int().optional(),
+  height: z.int().optional(),
 });
 
 export const FFProbeAudioStream = z.object({
-  index: z.number(),
-  codec_name: z.string(),
+  codec_name: z.string().optional(),
   codec_type: z.literal('audio'),
 });
 
 export const FFProbeDataStream = z.object({
-  index: z.number(),
   codec_type: z.literal('data'),
 });
 
