@@ -6,6 +6,11 @@ export const FFProbeEmptyStream = z.object({
   codec_type: z.literal('').optional(),
 });
 
+export const FFProbeSubtitleStream = z.object({
+  index: z.number(),
+  codec_type: z.literal('subtitle'),
+});
+
 export const FFProbeVideoStream = z.object({
   index: z.number(),
   codec_name: z.string(),
@@ -42,7 +47,15 @@ export const FFProbeFormat = z.object({
 
 export const FFProbeOutput = z.object({
   streams: z
-    .array(z.union([FFProbeVideoStream, FFProbeAudioStream, FFProbeDataStream, FFProbeEmptyStream]))
+    .array(
+      z.union([
+        FFProbeVideoStream,
+        FFProbeAudioStream,
+        FFProbeDataStream,
+        FFProbeSubtitleStream,
+        FFProbeEmptyStream,
+      ]),
+    )
     .optional(),
   format: FFProbeFormat.optional(),
 });
