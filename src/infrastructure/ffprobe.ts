@@ -2,6 +2,10 @@ import { $ } from 'bun';
 import z from 'zod';
 import { stringToFloat, stringToInt } from '@/util/zod';
 
+export const FFProbeEmptyStream = z.object({
+  codec_type: z.any(),
+});
+
 export const FFProbeVideoStream = z.object({
   index: z.number(),
   codec_name: z.string(),
@@ -37,7 +41,9 @@ export const FFProbeFormat = z.object({
 });
 
 export const FFProbeOutput = z.object({
-  streams: z.array(z.union([FFProbeVideoStream, FFProbeAudioStream, FFProbeDataStream])).optional(),
+  streams: z
+    .array(z.union([FFProbeVideoStream, FFProbeAudioStream, FFProbeDataStream, FFProbeEmptyStream]))
+    .optional(),
   format: FFProbeFormat.optional(),
 });
 
