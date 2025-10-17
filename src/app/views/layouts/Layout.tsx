@@ -33,6 +33,10 @@ export const Layout: FC<Props> = ({ children, c }) => {
           />
           <link
             rel='stylesheet'
+            href='https://cdn.jsdelivr.net/npm/charts.css@1.2.0/dist/charts.min.css'
+          />
+          <link
+            rel='stylesheet'
             href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
           />
           <link rel='stylesheet' href='/css/main.css' />
