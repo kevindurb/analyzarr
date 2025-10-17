@@ -7,7 +7,7 @@ type DataItem = {
 };
 
 type Props = {
-  heading: string;
+  heading: string | Element;
   data: DataItem[];
   columns: [string, string];
   renderKey: FC<{ item: DataItem }>;

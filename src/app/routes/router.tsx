@@ -6,6 +6,7 @@ import { librariesRouter } from './libraries';
 
 export const router = new Hono<AppEnv>();
 
+router.get('/', (c) => c.redirect('/dashboards'));
 router.route('/libraries', librariesRouter);
 router.route('/files', filesRouter);
-router.route('/', dashboardRouter);
+router.route('/dashboards', dashboardRouter);
