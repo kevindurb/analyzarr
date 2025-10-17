@@ -13,9 +13,17 @@ filesRouter.get('/', zValidator('query', ListFilesQuery), async (c) => {
     where: c.req.valid('query'),
     orderBy: { fileSize: 'desc' },
   });
+  const totals = await prisma.file.aggregate({
+    where: c.req.valid('query'),
+    _sum: { fileSize: true },
+  });
+
   return c.html(
     <Layout c={c}>
       <h1 class='title'>Files</h1>
+      <h2 class='title is-size-4 has-text-primary'>
+        Total Size: {byteSize(Number(totals._sum.fileSize)).toString()}
+      </h2>
       <table class='table is-fullwidth'>
         <thead>
           <tr>

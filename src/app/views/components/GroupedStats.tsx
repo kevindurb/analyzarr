@@ -1,5 +1,5 @@
 import byteSize from 'byte-size';
-import { css } from 'hono/css';
+import { css, keyframes } from 'hono/css';
 import type { FC } from 'hono/jsx';
 
 type DataItem = {
@@ -17,11 +17,29 @@ type Props = {
 const getSize = (a: bigint | null, b: bigint | null) =>
   Number(((a ?? 0n) * 10000n) / (b ?? 0n)) / 10000;
 
+const scaleInAnimation = keyframes`
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+`;
+
 const rowStyles = css`
   & a {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  & td {
+    --color: var(--bulma-grey);
+    transform-origin: left;
+    animation: ${scaleInAnimation};
+    animation-duration: 1s;
+    min-height: 2rem !important;
   }
 `;
 
