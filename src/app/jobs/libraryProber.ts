@@ -22,6 +22,7 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
   for (const { id, filePath } of files) {
     try {
       const data = await ffprobe(filePath);
+      if (!data) continue;
       const videoStream = data.streams?.find((stream) => stream.codec_type === 'video');
       const audioStream = data.streams?.find((stream) => stream.codec_type === 'audio');
 

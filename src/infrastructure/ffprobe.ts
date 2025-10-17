@@ -60,9 +60,13 @@ export const FFProbeOutput = z.object({
   format: FFProbeFormat.optional(),
 });
 
-export const ffprobe = async (path: string): Promise<z.infer<typeof FFProbeOutput>> => {
-  const result =
-    await $`ffprobe -v quiet -print_format json -show_format -show_streams ${path}`.json();
-  console.log('Probed file', path);
-  return await FFProbeOutput.parseAsync(result);
+export const ffprobe = async (path: string): Promise<z.infer<typeof FFProbeOutput> | void> => {
+  try {
+    const result =
+      await $`ffprobe -v quiet -print_format json -show_format -show_streams ${path}`.json();
+    console.log('Probed file', path);
+    return await FFProbeOutput.parseAsync(result);
+  } catch (err) {
+    console.error('Error probing file', err);
+  }
 };
