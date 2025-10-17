@@ -14,8 +14,10 @@ type Props = {
   renderKey: FC<{ item: DataItem }>;
 };
 
+const PRECISION = 1e2;
+
 const getSize = (a: bigint | null, b: bigint | null) =>
-  Number(((a ?? 0n) * 10000n) / (b ?? 0n)) / 10000;
+  Number(((a ?? 0n) * BigInt(PRECISION)) / (b ?? 0n)) / PRECISION;
 
 const scaleInAnimation = keyframes`
   from {
