@@ -1,5 +1,5 @@
-import clx from 'classnames';
 import type { HonoRequest } from 'hono';
+import { cx } from 'hono/css';
 import type { FC } from 'hono/jsx';
 import { Icon } from '../elements/Icon';
 
@@ -19,7 +19,7 @@ export const Nav: FC<Props> = ({ req }) => (
     <div class='navbar-menu'>
       <div class='navbar-start'>
         <a
-          class={clx('navbar-item', { 'has-text-primary': req.path.startsWith('/libraries') })}
+          class={cx('navbar-item', req.path.startsWith('/libraries') && 'has-text-primary')}
           href='/libraries'
         >
           Libraries

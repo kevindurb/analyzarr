@@ -1,4 +1,4 @@
-import clx from 'classnames';
+import { cx } from 'hono/css';
 import type { FC, PropsWithChildren } from 'hono/jsx';
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
 };
 
 export const Fab: FC<PropsWithChildren<Props>> = ({ children, href }) => {
-  const classes = clx(
+  const classes = cx(
     'is-fixed',
     'is-bottom-right',
     'm-5',

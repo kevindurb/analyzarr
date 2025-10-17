@@ -1,18 +1,36 @@
-import clx from 'classnames';
+import { cx } from 'hono/css';
 import type { FC, PropsWithChildren } from 'hono/jsx';
 
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+
 type Props = {
-  type: 'success' | 'info' | 'warning' | 'error';
+  type: NotificationType;
+};
+
+const getTypeClass = (type: NotificationType) => {
+  switch (type) {
+    case 'info':
+      return 'is-info';
+    case 'success':
+      return 'is-success';
+    case 'warning':
+      return 'is-warning';
+    case 'error':
+      return 'is-danger';
+    default:
+      return '';
+  }
 };
 
 export const Notification: FC<PropsWithChildren<Props>> = ({ type, children }) => (
   <div
-    class={clx('notification', 'animate__animated', 'animate__fadeOutRight', 'animate__delay-5s', {
-      'is-info': type === 'info',
-      'is-success': type === 'success',
-      'is-warning': type === 'warning',
-      'is-danger': type === 'error',
-    })}
+    class={cx(
+      'notification',
+      'animate__animated',
+      'animate__fadeOutRight',
+      'animate__delay-5s',
+      getTypeClass(type),
+    )}
   >
     {children}
   </div>

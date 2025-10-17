@@ -1,5 +1,5 @@
-import clx from 'classnames';
 import type { Context } from 'hono';
+import { cx, Style } from 'hono/css';
 import { html } from 'hono/html';
 import type { FC, PropsWithChildren } from 'hono/jsx';
 import type { AppEnv } from '@/app/types';
@@ -41,12 +41,13 @@ export const Layout: FC<Props> = ({ children, c }) => {
           />
           <link rel='stylesheet' href='/css/main.css' />
           <title>Analyzarr</title>
+          <Style />
         </head>
         <body class='has-navbar-fixed-top'>
           <Nav req={c.req} />
           <main class='container my-4'>{children}</main>
           <div
-            class={clx(
+            class={cx(
               'p-2',
               'z-40',
               'is-flex',
