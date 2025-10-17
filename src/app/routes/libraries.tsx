@@ -2,7 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { LibraryType } from '@/generated/prisma';
 import { prisma } from '@/infrastructure/prisma';
-import { scanLibrary } from '../jobs/libraryScanner';
+import * as libraryScanner from '../jobs/libraryScanner';
 import type { AppEnv } from '../types';
 import { CreateLibraryBody } from '../validators/CreateLibrary';
 import { Fab } from '../views/elements/Fab';
@@ -133,7 +133,7 @@ librariesRouter.post('/:libraryId/scan', async (c) => {
   const library = await prisma.library.findUniqueOrThrow({
     where: { id: c.req.param('libraryId') },
   });
-  scanLibrary(library.id);
+  libraryScanner.run(library.id);
   c.get('session').flash('info', 'Scanning in progress');
   return c.redirect('/libraries');
 });

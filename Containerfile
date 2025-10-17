@@ -1,7 +1,7 @@
 FROM oven/bun:1 AS base
 WORKDIR /usr/src/app
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl ffmpeg
 
 FROM base AS install
 RUN mkdir -p /tmp/dev

@@ -1,16 +1,58 @@
 import { Cron } from 'croner';
+import { getAllFilesInDir } from '@/infrastructure/filesService';
 import { prisma } from '@/infrastructure/prisma';
+import * as libraryProber from './libraryProber';
 
-export const scanLibrary = (libraryId: string) => {
-  const worker = new Worker(new URL('../workers/libraryScanner.ts', import.meta.url).href);
+declare var self: Worker;
+
+export const run = (libraryId: string) => {
+  const worker = new Worker(import.meta.url);
   worker.postMessage({ libraryId });
 };
 
-export const scanAllLibraries = async () => {
+const scanAllLibraries = async () => {
   const libraries = await prisma.library.findMany();
   for (const library of libraries) {
-    scanLibrary(library.id);
+    run(library.id);
   }
 };
 
 export const startSchedule = () => new Cron('0 * * * *', scanAllLibraries);
+
+self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
+  console.log('Starting');
+  const library = await prisma.library.findUniqueOrThrow({
+    where: { id: event.data.libraryId },
+    include: { files: true },
+  });
+  const files = await getAllFilesInDir(library.path);
+
+  for (const file of files) {
+    console.log('Found File', file);
+    await prisma.file.upsert({
+      where: {
+        filePath: file.filePath,
+      },
+      update: {
+        ...file,
+        libraryId: library.id,
+      },
+      create: {
+        ...file,
+        libraryId: library.id,
+      },
+    });
+  }
+
+  for (const file of library.files) {
+    const matchingFile = files.find(({ filePath }) => filePath === file.filePath);
+    if (!matchingFile) {
+      console.log('Deleting missing file', file.filePath);
+      await prisma.file.delete({ where: { filePath: file.filePath, libraryId: library.id } });
+    }
+  }
+
+  await libraryProber.run();
+
+  console.log('Done scanning');
+};

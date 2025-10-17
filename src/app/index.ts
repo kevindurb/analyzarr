@@ -9,7 +9,7 @@ import { CookieStore, sessionMiddleware } from 'hono-sessions';
 
 import { prisma } from '@/infrastructure/prisma';
 import { getAppSecret } from '@/util/env';
-import { startSchedule } from './jobs/libraryScanner';
+import * as libraryScanner from './jobs/libraryScanner';
 import { router } from './routes/router';
 import type { AppEnv } from './types';
 
@@ -43,18 +43,18 @@ app.onError((err, c) => {
 
 app.route('/', router);
 
-const scanAllLibrariesJob = startSchedule();
+const libraryScannerCron = libraryScanner.startSchedule();
 
 process.on('SIGTERM', async () => {
   console.log('Received SIGTERM, shutting down gracefully');
-  scanAllLibrariesJob.stop();
+  libraryScannerCron.stop();
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
   console.log('Received SIGINT, shutting down gracefully');
-  scanAllLibrariesJob.stop();
+  libraryScannerCron.stop();
   await prisma.$disconnect();
   process.exit(0);
 });

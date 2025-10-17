@@ -34,6 +34,12 @@ model File {
   fileSize  BigInt
   fileType  String
 
+  videoCodec String?
+  videoWidth Int?
+  videoHeight Int?
+
+  audioCodec String?
+
   libraryId String?
   library   Library?    @relation(fields: [libraryId], references: [id])
 

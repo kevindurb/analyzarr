@@ -28,6 +28,15 @@ router.get('/', async (c) => {
       _sum: { fileSize: 'desc' },
     },
   });
+  const usageByVideoCodec = await prisma.file.groupBy({
+    by: ['videoCodec'],
+    _sum: {
+      fileSize: true,
+    },
+    orderBy: {
+      _sum: { fileSize: 'desc' },
+    },
+  });
 
   return c.html(
     <Layout c={c}>
@@ -52,6 +61,25 @@ router.get('/', async (c) => {
               </tr>
             );
           })}
+        </tbody>
+      </table>
+      <h2 class='is-size-3'>By Video Codec</h2>
+      <table class='table is-fullwidth'>
+        <thead>
+          <tr>
+            <th>Codec</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usageByVideoCodec.map(({ videoCodec, _sum: { fileSize } }) => (
+            <tr>
+              <td>
+                <a href={`/files?videoCodec=${videoCodec}`}>{videoCodec ?? 'Unknown'}</a>
+              </td>
+              <td>{byteSize(Number(fileSize)).toString()}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <h2 class='is-size-3'>By Type</h2>
