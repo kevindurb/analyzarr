@@ -16,7 +16,7 @@ type Props = {
 const getSize = (a: bigint | null, b: bigint | null) =>
   Number(((a ?? 0n) * 10000n) / (b ?? 0n)) / 10000;
 
-export const GroupedStatsPie: FC<Props> = ({ heading, columns, data, renderKey }) => {
+export const GroupedStats: FC<Props> = ({ heading, columns, data, renderKey }) => {
   const total = data.reduce((acc, { value }) => acc + (value ?? 0n), 0n);
   return (
     <table class='charts-css bar show-heading show-labels hide-data p-2 data-spacing-4'>

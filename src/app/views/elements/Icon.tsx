@@ -2,17 +2,18 @@ import querystring from 'node:querystring';
 import type { FC } from 'hono/jsx';
 
 const iconNames = [
-  'download',
-  'movie',
-  'tv',
-  'link_off',
-  'edit',
-  'check',
   'add',
-  'troubleshoot',
+  'check',
   'delete',
+  'download',
+  'edit',
+  'link_off',
+  'movie',
   'save',
   'scan',
+  'storage',
+  'troubleshoot',
+  'tv',
 ] as const;
 type IconName = (typeof iconNames)[number];
 
@@ -22,6 +23,7 @@ type Props = {
 
 const styles = {
   'font-size': 'inherit',
+  'line-height': 'inherit',
 };
 
 export const Icon: FC<Props> = ({ name }) => (
