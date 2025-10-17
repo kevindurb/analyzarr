@@ -8,8 +8,8 @@ export const FFProbeVideoStream = z.object({
   codec_type: z.literal('video'),
   width: z.int(),
   height: z.int(),
-  duration: stringToFloat,
-  bit_rate: stringToInt,
+  duration: stringToFloat.optional(),
+  bit_rate: stringToInt.optional(),
 });
 
 export const FFProbeAudioStream = z.object({
@@ -31,14 +31,14 @@ export const FFProbeFormat = z.object({
   filename: z.string(),
   format_name: z.string(),
   format_long_name: z.string(),
-  duration: stringToFloat,
+  duration: stringToFloat.optional(),
   size: stringToInt,
-  bit_rate: stringToInt,
+  bit_rate: stringToInt.optional(),
 });
 
 export const FFProbeOutput = z.object({
-  streams: z.array(z.union([FFProbeVideoStream, FFProbeAudioStream, FFProbeDataStream])),
-  format: FFProbeFormat,
+  streams: z.array(z.union([FFProbeVideoStream, FFProbeAudioStream, FFProbeDataStream])).optional(),
+  format: FFProbeFormat.optional(),
 });
 
 export const ffprobe = async (path: string): Promise<z.infer<typeof FFProbeOutput>> => {

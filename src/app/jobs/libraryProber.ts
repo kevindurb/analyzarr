@@ -6,7 +6,9 @@ import { prisma } from '@/infrastructure/prisma';
 declare var self: Worker;
 
 export const run = async () => {
-  const files = await prisma.file.findMany({ where: { videoCodec: null, audioCodec: null } });
+  const files = await prisma.file.findMany({
+    where: { videoCodec: null, audioCodec: null, disableProbe: false },
+  });
   const worker = new Worker(import.meta.url);
   worker.postMessage({ files });
 };
@@ -20,8 +22,8 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
   for (const { id, filePath } of files) {
     try {
       const data = await ffprobe(filePath);
-      const videoStream = data.streams.find((stream) => stream.codec_type === 'video');
-      const audioStream = data.streams.find((stream) => stream.codec_type === 'audio');
+      const videoStream = data.streams?.find((stream) => stream.codec_type === 'video');
+      const audioStream = data.streams?.find((stream) => stream.codec_type === 'audio');
 
       await prisma.file.update({
         where: {
@@ -32,6 +34,7 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
           videoHeight: videoStream?.height,
           videoWidth: videoStream?.width,
           audioCodec: audioStream?.codec_name,
+          disableProbe: !data.format,
         },
       });
     } catch (err) {

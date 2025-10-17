@@ -40,6 +40,8 @@ model File {
 
   audioCodec String?
 
+  disableProbe Boolean  @default(false)
+
   libraryId String?
   library   Library?    @relation(fields: [libraryId], references: [id])
 
