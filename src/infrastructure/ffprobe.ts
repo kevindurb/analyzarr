@@ -60,7 +60,7 @@ export const FFProbeOutput = z.object({
   format: FFProbeFormat.optional(),
 });
 
-export const ffprobe = async (path: string): Promise<z.infer<typeof FFProbeOutput> | void> => {
+export const ffprobe = async (path: string): Promise<z.infer<typeof FFProbeOutput> | undefined> => {
   try {
     const result =
       await $`ffprobe -v quiet -print_format json -show_format -show_streams ${path}`.json();
