@@ -25,10 +25,12 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
     where: { id: event.data.libraryId },
     include: { files: true },
   });
-  const files = await getAllFilesInDir(library.path);
 
-  for (const file of files) {
+  const foundPaths: string[] = [];
+
+  for await (const file of getAllFilesInDir(library.path)) {
     console.log('Found File', file);
+    foundPaths.push(file.filePath);
     await prisma.file.upsert({
       where: {
         filePath: file.filePath,
@@ -45,7 +47,7 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
   }
 
   for (const file of library.files) {
-    const matchingFile = files.find(({ filePath }) => filePath === file.filePath);
+    const matchingFile = foundPaths.includes(file.filePath);
     if (!matchingFile) {
       console.log('Deleting missing file', file.filePath);
       await prisma.file.delete({ where: { filePath: file.filePath, libraryId: library.id } });

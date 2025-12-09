@@ -7,7 +7,7 @@ export type File = {
   fileType: string;
 };
 
-export const getAllFilesInDir = async (dir: string): Promise<File[]> => {
+export async function* getAllFilesInDir(dir: string): AsyncGenerator<File> {
   console.log('Indexing directory', dir);
   const files: File[] = [];
 
@@ -18,14 +18,16 @@ export const getAllFilesInDir = async (dir: string): Promise<File[]> => {
         const fullPath = path.resolve(dir, file);
         const stat = await fs.stat(fullPath);
         if (stat.isDirectory()) {
-          files.push(...(await getAllFilesInDir(fullPath)));
+          for await (const file of getAllFilesInDir(fullPath)) {
+            yield file;
+          }
         } else {
           console.log('Found file', file);
-          files.push({
+          yield {
             filePath: fullPath,
             fileSize: stat.size,
             fileType: path.extname(fullPath).substring(1),
-          });
+          };
         }
       } catch (err) {
         console.warn('Error reading file', file, err);
@@ -36,4 +38,4 @@ export const getAllFilesInDir = async (dir: string): Promise<File[]> => {
   }
 
   return files;
-};
+}
