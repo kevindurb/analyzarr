@@ -47,12 +47,12 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
       } catch (err) {
         console.error('Error probing file', filePath, err);
       }
-
-      await Promise.all(updates);
     }
+
+    await Promise.all(updates);
 
     console.log('Done scanning');
   } finally {
-    self.terminate();
+    process.exit();
   }
 };

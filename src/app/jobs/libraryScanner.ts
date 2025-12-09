@@ -49,6 +49,6 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
 
     console.log('Done scanning');
   } finally {
-    self.terminate();
+    process.exit();
   }
 };
