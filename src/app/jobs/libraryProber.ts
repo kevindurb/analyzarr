@@ -21,6 +21,8 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
     const { files } = event.data;
     console.log(`Probing ${files.length} files`);
 
+    const updates = [];
+
     for (const { id, filePath } of files) {
       try {
         const data = await ffprobe(filePath);
@@ -28,21 +30,25 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
         const videoStream = data.streams?.find((stream) => stream.codec_type === 'video');
         const audioStream = data.streams?.find((stream) => stream.codec_type === 'audio');
 
-        await prisma.file.update({
-          where: {
-            id,
-          },
-          data: {
-            videoCodec: videoStream?.codec_name,
-            videoHeight: videoStream?.height,
-            videoWidth: videoStream?.width,
-            audioCodec: audioStream?.codec_name,
-            disableProbe: !data.format,
-          },
-        });
+        updates.push(
+          prisma.file.update({
+            where: {
+              id,
+            },
+            data: {
+              videoCodec: videoStream?.codec_name,
+              videoHeight: videoStream?.height,
+              videoWidth: videoStream?.width,
+              audioCodec: audioStream?.codec_name,
+              disableProbe: !data.format,
+            },
+          }),
+        );
       } catch (err) {
         console.error('Error probing file', filePath, err);
       }
+
+      await Promise.all(updates);
     }
 
     console.log('Done scanning');
