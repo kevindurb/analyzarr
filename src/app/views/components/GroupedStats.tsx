@@ -1,11 +1,14 @@
 import byteSize from 'byte-size';
 import { css, keyframes } from 'hono/css';
 import type { FC } from 'hono/jsx';
+import type { HtmlEscapedString } from 'hono/utils/html';
 
 type DataItem = {
   key: string | null;
   value: bigint | null;
 };
+
+type Element = HtmlEscapedString | Promise<HtmlEscapedString> | null;
 
 type Props = {
   heading: string | Element;
