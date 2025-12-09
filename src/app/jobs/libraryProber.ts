@@ -44,4 +44,6 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
   }
 
   console.log('Done scanning');
+
+  self.terminate();
 };

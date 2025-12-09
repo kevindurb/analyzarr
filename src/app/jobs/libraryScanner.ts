@@ -55,4 +55,6 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
   await libraryProber.run();
 
   console.log('Done scanning');
+
+  self.terminate();
 };
