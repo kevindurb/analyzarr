@@ -9,8 +9,6 @@ export type File = {
 
 export async function* getAllFilesInDir(dir: string): AsyncGenerator<File> {
   console.log('Indexing directory', dir);
-  const files: File[] = [];
-
   try {
     for (const file of await fs.readdir(dir)) {
       if (path.basename(file).startsWith('.')) continue;
@@ -36,6 +34,4 @@ export async function* getAllFilesInDir(dir: string): AsyncGenerator<File> {
   } catch (err) {
     console.warn('Error reading directory', dir, err);
   }
-
-  return files;
 }

@@ -1,5 +1,5 @@
 import { Cron } from 'croner';
-import { getAllFilesInDir } from '@/infrastructure/filesService';
+import { type File, getAllFilesInDir } from '@/infrastructure/filesService';
 import { prisma } from '@/infrastructure/prisma';
 import * as libraryProber from './libraryProber';
 
@@ -21,42 +21,34 @@ export const startSchedule = () => new Cron('0 * * * *', scanAllLibraries);
 
 self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
   console.log('Starting');
-  const library = await prisma.library.findUniqueOrThrow({
-    where: { id: event.data.libraryId },
-    include: { files: true },
-  });
-
-  const foundPaths: string[] = [];
-
-  for await (const file of getAllFilesInDir(library.path)) {
-    console.log('Found File', file);
-    foundPaths.push(file.filePath);
-    await prisma.file.upsert({
-      where: {
-        filePath: file.filePath,
-      },
-      update: {
-        ...file,
-        libraryId: library.id,
-      },
-      create: {
-        ...file,
-        libraryId: library.id,
-      },
+  try {
+    const library = await prisma.library.findUniqueOrThrow({
+      where: { id: event.data.libraryId },
+      include: { files: true },
     });
-  }
 
-  for (const file of library.files) {
-    const matchingFile = foundPaths.includes(file.filePath);
-    if (!matchingFile) {
-      console.log('Deleting missing file', file.filePath);
-      await prisma.file.delete({ where: { filePath: file.filePath, libraryId: library.id } });
+    const foundPaths: string[] = [];
+    const filesToCreate: File[] = [];
+
+    for await (const file of getAllFilesInDir(library.path)) {
+      console.log('Found File', file);
+      foundPaths.push(file.filePath);
+      const exists = library.files.find(({ filePath }) => file.filePath === filePath);
+      if (!exists) filesToCreate.push(file);
     }
+
+    await prisma.file.createMany({
+      data: filesToCreate.map((file) => ({ ...file, libraryId: library.id })),
+    });
+
+    await prisma.file.deleteMany({
+      where: { filePath: { notIn: foundPaths }, libraryId: library.id },
+    });
+
+    await libraryProber.run();
+
+    console.log('Done scanning');
+  } finally {
+    self.terminate();
   }
-
-  await libraryProber.run();
-
-  console.log('Done scanning');
-
-  self.terminate();
 };
