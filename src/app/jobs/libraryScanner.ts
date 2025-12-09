@@ -21,34 +21,30 @@ export const startSchedule = () => new Cron('0 * * * *', scanAllLibraries);
 
 self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
   console.log('Starting');
-  try {
-    const library = await prisma.library.findUniqueOrThrow({
-      where: { id: event.data.libraryId },
-      include: { files: true },
-    });
+  const library = await prisma.library.findUniqueOrThrow({
+    where: { id: event.data.libraryId },
+    include: { files: true },
+  });
 
-    const foundPaths: string[] = [];
-    const filesToCreate: File[] = [];
+  const foundPaths: string[] = [];
+  const filesToCreate: File[] = [];
 
-    for await (const file of getAllFilesInDir(library.path)) {
-      console.log('Found File', file);
-      foundPaths.push(file.filePath);
-      const exists = library.files.find(({ filePath }) => file.filePath === filePath);
-      if (!exists) filesToCreate.push(file);
-    }
-
-    await prisma.file.createMany({
-      data: filesToCreate.map((file) => ({ ...file, libraryId: library.id })),
-    });
-
-    await prisma.file.deleteMany({
-      where: { filePath: { notIn: foundPaths }, libraryId: library.id },
-    });
-
-    await libraryProber.run();
-
-    console.log('Done scanning');
-  } finally {
-    process.exit();
+  for await (const file of getAllFilesInDir(library.path)) {
+    console.log('Found File', file);
+    foundPaths.push(file.filePath);
+    const exists = library.files.find(({ filePath }) => file.filePath === filePath);
+    if (!exists) filesToCreate.push(file);
   }
+
+  await prisma.file.createMany({
+    data: filesToCreate.map((file) => ({ ...file, libraryId: library.id })),
+  });
+
+  await prisma.file.deleteMany({
+    where: { filePath: { notIn: foundPaths }, libraryId: library.id },
+  });
+
+  await libraryProber.run();
+
+  console.log('Done scanning');
 };
