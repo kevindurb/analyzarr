@@ -11,22 +11,22 @@
     "generate:prisma": "prisma generate"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.8",
+    "@biomejs/biome": "^2.3.10",
     "@types/bun": "latest",
     "@types/byte-size": "^8.1.2",
     "lefthook": "^1.13.6",
     "openapi-typescript-codegen": "^0.29.0",
-    "prisma": "^6.19.0"
+    "prisma": "^6.19.1"
   },
   "peerDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@ctrl/video-filename-parser": "^5.4.1",
     "@hono/node-server": "^1.19.7",
-    "@hono/zod-validator": "^0.7.5",
+    "@hono/zod-validator": "^0.7.6",
     "@prisma/adapter-libsql": "^7.2.0",
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "^6.19.1",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
@@ -34,8 +34,8 @@
     "byte-size": "^9.0.1",
     "croner": "^9.1.0",
     "form-data": "^4.0.5",
-    "hono": "^4.10.8",
+    "hono": "^4.11.3",
     "hono-sessions": "^0.8.0",
-    "zod": "^4.1.13"
+    "zod": "^4.3.3"
   }
 }
