@@ -5,7 +5,7 @@ import type { HtmlEscapedString } from 'hono/utils/html';
 
 type DataItem = {
   key: string | null;
-  value: bigint | null;
+  value: bigint | number | null;
 };
 
 type Element = HtmlEscapedString | Promise<HtmlEscapedString> | null;
@@ -49,7 +49,7 @@ const rowStyles = css`
 `;
 
 export const GroupedStats: FC<Props> = ({ heading, columns, data, renderKey }) => {
-  const total = data.reduce((acc, { value }) => acc + (value ?? 0n), 0n);
+  const total = data.reduce((acc, { value }) => acc + BigInt(value ?? 0n), 0n);
   return (
     <table class='charts-css bar show-heading show-labels hide-data p-2 data-spacing-4'>
       <caption class='is-size-4 subtitle'>{heading}</caption>
@@ -65,7 +65,7 @@ export const GroupedStats: FC<Props> = ({ heading, columns, data, renderKey }) =
           return (
             <tr class={rowStyles}>
               <th scope='row'>{renderKey({ item })}</th>
-              <td style={`--size: ${getSize(value, total)}`}>
+              <td style={`--size: ${getSize(BigInt(value ?? 0n), total)}`}>
                 <span class='data'>{byteSize(Number(value)).toString()}</span>
               </td>
             </tr>
