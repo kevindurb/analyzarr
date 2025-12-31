@@ -31,7 +31,7 @@ model File {
   id        String      @id @default(cuid())
 
   filePath  String      @unique
-  fileSize  BigInt
+  fileSize  Int
   fileType  String
 
   videoCodec String?

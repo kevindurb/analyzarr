@@ -1,6 +1,7 @@
 import { Cron } from 'croner';
 import { type File, getAllFilesInDir } from '@/infrastructure/filesService';
 import { prisma } from '@/infrastructure/prisma';
+import * as libraryProber from './libraryProber';
 
 declare var self: Worker;
 
@@ -39,7 +40,11 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
     }
 
     await prisma.file.createMany({
-      data: filesToCreate.map((file) => ({ ...file, libraryId: library.id })),
+      data: filesToCreate.map((file) => ({
+        ...file,
+        fileSize: Math.floor(file.fileSize),
+        libraryId: library.id,
+      })),
     });
 
     await prisma.file.deleteMany({
@@ -47,6 +52,8 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
     });
 
     console.log('Done scanning');
+
+    libraryProber.run();
   } finally {
     process.exit();
   }
