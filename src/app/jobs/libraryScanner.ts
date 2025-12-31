@@ -51,6 +51,7 @@ self.onmessage = async (event: MessageEvent<{ libraryId: string }>) => {
       where: { filePath: { notIn: foundPaths }, libraryId: library.id },
     });
 
+    await prisma.$disconnect();
     console.log('Done scanning');
 
     libraryProber.run();

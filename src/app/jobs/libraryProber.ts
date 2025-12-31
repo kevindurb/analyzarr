@@ -52,6 +52,7 @@ self.onmessage = async (event: MessageEvent<{ files: File[] }>) => {
     }
 
     await Promise.all(updates);
+    await prisma.$disconnect();
 
     console.log('Done scanning');
   } finally {

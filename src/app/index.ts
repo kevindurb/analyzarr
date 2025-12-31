@@ -23,6 +23,7 @@ app.use(secureHeaders());
 
 app.use('/*', serveStatic({ root: './public' }));
 app.use(
+  // @ts-expect-error
   sessionMiddleware({
     store: new CookieStore(),
     encryptionKey: getAppSecret(),
